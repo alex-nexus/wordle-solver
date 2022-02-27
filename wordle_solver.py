@@ -6,11 +6,7 @@ from typing import Dict, List
 @dataclass
 class Word:
     chars: List[str]
-    char_scores: List[int] = field(default_factory=lambda: [0, 0, 0, 0, 0])
-
-    def score(self) -> int:
-        # the summation of each (char,pos) frequency
-        return sum(self.char_scores)
+    score: int = field(default_factory=lambda: 0)
 
     def __str__(self) -> str:
         return ('').join(self.chars)
@@ -44,7 +40,7 @@ class WordleSolver:
 
     def __post_init__(self):
         self._score_words_by_char_frequency()
-        self.words.sort(key=lambda word: word.score(), reverse=True)
+        self.words.sort(key=lambda word: word.score, reverse=True)
 
     def start(self, top_n: int = 6):
         self.responses: List[Response] = []
@@ -76,7 +72,7 @@ class WordleSolver:
 
         for word in self.words:
             for pos, char in enumerate(word.chars):
-                word.char_scores[pos] = char_pos_frequency[f"{char},{pos}"]
+                word.score += char_pos_frequency[f"{char},{pos}"]
 
     def _get_qualified_words(self) -> List[Word]:
         def _is_word_qualified(word: Word) -> bool:
