@@ -87,12 +87,13 @@ class WordleSolver:
             round += 1
             print(f"Round {round}: Recommended Guesses:")
 
-            top_words = self._guess_top_words(top_n)
-            for i, word in enumerate(top_words):
+            qualified_words = self._qualified_words()
+            print(f"There are {len(qualified_words)} candidates")
+            for i, word in enumerate(qualified_words[0:top_n]):
                 print(f"{i+1}): {word}")
 
-            guess_index = input(f'Enter your guess(1-{len(top_words)}):')
-            guess_word = top_words[int(guess_index) - 1]
+            guess_index = input(f'Enter your guess(1-{top_n}):')
+            guess_word = qualified_words[int(guess_index) - 1]
             response_input = input('Enter Wordle response:')
             self.responses.append(Response(guess_word, response_input))
 
@@ -126,27 +127,17 @@ class WordleSolver:
             self.char_pos_frequency[f"{char},{pos}"] += 1
 
     # game
-    def _guess_top_words(self, top_n=10) -> List[Word]:
-        count = 0
-        guess_words: List[Word] = []
+    def _qualified_words(self) -> List[Word]:
+        return [word for word in self.wordle_words
+                if self._is_word_qualified(word)]
 
-        for word in self.wordle_words:
-            if count >= top_n:
-                return guess_words
-
-            # print(f"{word} / {self.is_word_qualified(word)}")
-            if self.is_word_qualified(word):
-                count += 1
-                guess_words.append(word)
-
-        return guess_words
-
-    def is_word_qualified(self, word: Word) -> bool:
+    def _is_word_qualified(self, word: Word) -> bool:
         for response in self.responses:
             if not response.is_word_qualified(word):
                 return False
         return True
 
 
-solver = WordleSolver()
-solver.start(10)
+if __name__ == '__main__':
+    solver = WordleSolver()
+    solver.start(5)
