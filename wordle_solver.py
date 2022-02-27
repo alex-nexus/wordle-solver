@@ -67,6 +67,10 @@ class WordleSolver:
             choice = input(f'Choose your guess(1-{top_n}):')
             guess_word = qualified_words[int(choice) - 1]
             response_input = input('Enter Wordle response:')
+            if response_input == 'ggggg':
+                print("congratulations!!")
+                return
+
             self.responses.append(Response(guess_word, response_input))
 
     def _score_words_by_char_frequency(self):
