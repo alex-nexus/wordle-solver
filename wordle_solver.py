@@ -110,8 +110,7 @@ class WordleSolver:
                 word.char_scores[pos] = self.char_pos_frequency[f"{char},{pos}"]
 
     def _sort_words(self):
-        self.wordle_words = sorted(
-            self.wordle_words, key=lambda word: word.score, reverse=True)
+        self.wordle_words.sort(key=lambda word: word.score,  reverse=True)
 
     # game
     def _qualified_words(self) -> List[Word]:
