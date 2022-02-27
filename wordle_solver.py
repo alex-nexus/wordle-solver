@@ -2,6 +2,8 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List
 
+WORDLE_WORDS_FILE = 'wordle_words.txt'
+
 
 @dataclass
 class Word:
@@ -65,8 +67,6 @@ class Response:
 
 @dataclass
 class WordleSolver:
-    ALL_WORDS_FILE = 'wordle_words.txt'
-
     def __init__(self):
         self.wordle_words: List[Word] = []
         self.char_pos_frequency: Dict[str, int] = defaultdict(int)
@@ -74,8 +74,8 @@ class WordleSolver:
 
         self._process_all_words_file()
         self._analyze_char_frequency()
-        self._score_wordle_words()
-        self._sort_wordle_words()  # sort by total scores
+        self._score_words()
+        self._sort_words()  # sort by total scores
 
     def start(self, top_n: int = 10):
         round = 0
@@ -95,7 +95,7 @@ class WordleSolver:
 
     # preprocessing
     def _process_all_words_file(self):
-        fh = open(self.ALL_WORDS_FILE, 'r')
+        fh = open(WORDLE_WORDS_FILE, 'r')
         self.wordle_words = [Word(line) for line in fh.readlines()
                              if Word.is_wordle_word(line)]
 
@@ -104,12 +104,12 @@ class WordleSolver:
             for pos, char in enumerate(word.chars):
                 self.char_pos_frequency[f"{char},{pos}"] += 1
 
-    def _score_wordle_words(self):
+    def _score_words(self):
         for word in self.wordle_words:
             for pos, char in enumerate(word.chars):
                 word.char_scores[pos] = self.char_pos_frequency[f"{char},{pos}"]
 
-    def _sort_wordle_words(self):
+    def _sort_words(self):
         self.wordle_words = sorted(
             self.wordle_words, key=lambda word: word.score, reverse=True)
 
