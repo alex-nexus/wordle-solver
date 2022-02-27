@@ -40,26 +40,18 @@ class Word:
 
 @dataclass
 class Response:
-    RESPONSE_FLAGS = ['B', 'Y', 'G']
-
-    guess_word: Word
-    flags: List[str]
-
-    def __init__(self, word: Word, flag_input: str):
-        self.guess_word = word
-        self.flags = [flag for flag in flag_input.strip().upper()]
+    word: Word
+    flags_str: str
 
     def is_word_qualified(self, word: Word) -> bool:
-        for pos, tuple in enumerate(zip(self.guess_word.chars, self.flags)):
-            char, flag = tuple
-
-            if flag == 'B' and char in word.chars:
+        for pos, (char, flag) in enumerate(zip(self.word.chars, list(self.flags_str))):
+            if flag == 'b' and char in word.chars:
                 return False
 
-            if flag == 'Y' and (char not in word.chars or word.chars[pos] == char):
+            if flag == 'y' and (char not in word.chars or word.chars[pos] == char):
                 return False
 
-            if flag == 'G' and word.chars[pos] != char:
+            if flag == 'g' and word.chars[pos] != char:
                 return False
 
         return True
