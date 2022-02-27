@@ -23,7 +23,7 @@ class Response:
         return (all([c in self.ALLOWED_COLORS for c in self.colors])
                 and len(self.colors) == 5)
 
-    def is_finished(self) -> bool:
+    def is_game_over(self) -> bool:
         return set(self.colors) == {'g'}
 
     def is_word_qualified(self, word: Word) -> bool:
@@ -64,7 +64,7 @@ class WordleSolver:
             response = Response(qualified_words[choice - 1], colors)
             if not response.is_valid():
                 print("\tRESPONSE INVALID. Please try again\n")
-            elif response.is_finished():
+            elif response.is_game_over():
                 return print("Game Over! Congratulations!!")
             else:
                 responses.append(response)
