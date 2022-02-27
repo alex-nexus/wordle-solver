@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List
 
@@ -13,12 +14,13 @@ class Word:
         self.chars = [c for c in word_input.strip().lower()]
         self.char_scores = [0, 0, 0, 0, 0]
 
-    def is_wordle_word(self):
-        if len(self.chars) != 5:
+    @staticmethod
+    def is_wordle_word(line: str):
+        chars = [c for c in line.strip().lower()]
+        if len(chars) != 5:
             return False
-
-        for char in self.chars:
-            if char.isdigit() or char in self.DISALLOWED_CHARS:
+        for char in chars:
+            if char.isdigit() or char in ('-', ",", '.', "'", "/"):
                 return False
 
         return True
@@ -65,13 +67,13 @@ class Response:
 class WordleSolver:
     ALL_WORDS_FILE = 'wordle_words.txt'
 
-    wordle_words: List[Word] = field(default_factory=list)
-    char_pos_frequency: Dict[str, int] = field(default_factory=dict)
+    def __init__(self):
+        self.wordle_words: List[Word] = []
+        self.char_pos_frequency: Dict[str, int] = defaultdict(int)
+        self.responses: List[Response] = []
 
-    responses: List[Response] = field(default_factory=list)
-
-    def __post_init__(self):
         self._process_all_words_file()
+        self._analyze_char_frequency()
         self._score_wordle_words()
         self._sort_wordle_words()  # sort by total scores
 
@@ -91,18 +93,16 @@ class WordleSolver:
             response_input = input('Enter Wordle response:')
             self.responses.append(Response(guess_word, response_input))
 
-    # private
-
     # preprocessing
-
     def _process_all_words_file(self):
-        rf = open(self.ALL_WORDS_FILE, 'r')
-        lines = rf.readlines()
-        for line in lines:
-            word = Word(line)
-            if word.is_wordle_word():
-                self.wordle_words.append(word)
-                self._count_char_frequency(word)
+        fh = open(self.ALL_WORDS_FILE, 'r')
+        self.wordle_words = [Word(line) for line in fh.readlines()
+                             if Word.is_wordle_word(line)]
+
+    def _analyze_char_frequency(self):
+        for word in self.wordle_words:
+            for pos, char in enumerate(word.chars):
+                self.char_pos_frequency[f"{char},{pos}"] += 1
 
     def _score_wordle_words(self):
         for word in self.wordle_words:
@@ -112,13 +112,6 @@ class WordleSolver:
     def _sort_wordle_words(self):
         self.wordle_words = sorted(
             self.wordle_words, key=lambda word: word.score, reverse=True)
-
-    def _count_char_frequency(self, word: Word):
-        for pos, char in enumerate(word.chars):
-            if self.char_pos_frequency.get(f"{char},{pos}") is None:
-                self.char_pos_frequency[f"{char},{pos}"] = 0
-
-            self.char_pos_frequency[f"{char},{pos}"] += 1
 
     # game
     def _qualified_words(self) -> List[Word]:
