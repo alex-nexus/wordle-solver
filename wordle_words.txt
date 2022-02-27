@@ -2549,7 +2549,6 @@ brins
 delay
 trans
 raced
-colan
 delia
 brits
 soncy
@@ -2576,7 +2575,6 @@ carib
 comer
 fuzes
 bogus
-coila
 guans
 morly
 virls
@@ -3024,7 +3022,6 @@ turks
 oakie
 riacs
 balun
-colat
 gause
 golfs
 latin
