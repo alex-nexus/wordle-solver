@@ -119,10 +119,7 @@ class WordleSolver:
                 if self._is_word_qualified(word)]
 
     def _is_word_qualified(self, word: Word) -> bool:
-        for response in self.responses:
-            if not response.is_word_qualified(word):
-                return False
-        return True
+        return all([response.is_word_qualified(word) for response in self.responses])
 
 
 if __name__ == '__main__':
