@@ -19,7 +19,7 @@ class Response:
     word: Word
     colors: List[str]
 
-    def is_valid(self):
+    def is_valid(self) -> bool:
         return (all([c in self.ALLOWED_COLORS for c in self.colors])
                 and len(self.colors) == 5)
 
@@ -59,15 +59,15 @@ class WordleSolver:
                 print(f"\t{i+1}): {word}")
 
             choice = int(input(f'Please choose (1-{top_n}):').strip())
-            colors_input = input('Enter Wordle response:')
+            colors = list(input('Enter Wordle response:'))
 
-            response = Response(qualified_words[choice - 1], list(colors_input))
-            if response.is_finished():
-                return print("congratulations!!")
-            if response.is_valid():
-                responses.append(response)
-            else:
+            response = Response(qualified_words[choice - 1], colors)
+            if not response.is_valid():
                 print("\tRESPONSE INVALID. Please try again\n")
+            elif response.is_finished():
+                return print("Game Over! Congratulations!!")
+            else:
+                responses.append(response)
 
     def _score_words_by_char_pos_frequency(self):
         char_pos_to_counts = defaultdict(int)
