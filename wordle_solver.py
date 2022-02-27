@@ -49,20 +49,14 @@ class Response:
         for pos, tuple in enumerate(zip(self.guess_word.chars, self.flags)):
             char, flag = tuple
 
-            if flag == 'B':
-                if char in word.chars:
-                    return False
+            if flag == 'B' and char in word.chars:
+                return False
 
-            if flag == 'Y':
-                if char not in word.chars:
-                    return False
+            if flag == 'Y' and (char not in word.chars or word.chars[pos] == char):
+                return False
 
-                if word.chars[pos] == char:
-                    return False
-
-            if flag == 'G':
-                if word.chars[pos] != char:
-                    return False
+            if flag == 'G' and word.chars[pos] != char:
+                return False
 
         return True
 
