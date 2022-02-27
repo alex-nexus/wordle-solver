@@ -2,8 +2,6 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List
 
-WORDLE_WORDS_FILE = 'wordle_words.txt'
-
 
 @dataclass
 class Word:
@@ -40,18 +38,17 @@ class Response:
 
 
 class WordleSolver:
-    wordle_words: List[Word] = field(default_factory=list)
+    words: List[Word] = field(default_factory=list)
 
     def __init__(self):
-        fh = open(WORDLE_WORDS_FILE, 'r')
-        self.wordle_words = [Word(list(line.strip()))
-                             for line in fh.readlines()]
+        fh = open('wordle_words.txt', 'r')
+        self.words = [Word(list(line.strip())) for line in fh.readlines()]
 
     def __post_init__(self):
         self._score_words_by_char_frequency()
-        self._sort_words_by_score()  # sort by total scores
+        self.words.sort(key=lambda word: word.score(), reverse=True)
 
-    def start(self, top_n: int = 5):
+    def start(self, top_n: int = 6):
         self.responses: List[Response] = []
 
         round = 0
@@ -75,23 +72,19 @@ class WordleSolver:
 
     def _score_words_by_char_frequency(self):
         char_pos_frequency: Dict[str, int] = defaultdict(int)
-        for word in self.wordle_words:
+        for word in self.words:
             for pos, char in enumerate(word.chars):
                 char_pos_frequency[f"{char},{pos}"] += 1
 
-        for word in self.wordle_words:
+        for word in self.words:
             for pos, char in enumerate(word.chars):
                 word.char_scores[pos] = char_pos_frequency[f"{char},{pos}"]
 
-    def _sort_words_by_score(self):
-        self.wordle_words.sort(key=lambda word: word.score(), reverse=True)
-
     def _get_qualified_words(self) -> List[Word]:
-        return [word for word in self.wordle_words
-                if self._is_word_qualified(word)]
+        def _is_word_qualified(word: Word) -> bool:
+            return all([response.is_word_qualified(word) for response in self.responses])
 
-    def _is_word_qualified(self, word: Word) -> bool:
-        return all([response.is_word_qualified(word) for response in self.responses])
+        return list(filter(lambda word: _is_word_qualified(word), self.words))
 
 
 if __name__ == '__main__':
