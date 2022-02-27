@@ -21,17 +21,17 @@ class Word:
 @dataclass
 class Response:
     word: Word
-    flags_str: str
+    colors_str: str
 
     def is_word_qualified(self, word: Word) -> bool:
-        for pos, (char, flag) in enumerate(zip(self.word.chars, list(self.flags_str))):
-            if flag == 'b' and char in word.chars:
+        for pos, (char, color) in enumerate(zip(self.word.chars, list(self.colors_str))):
+            if color == 'b' and char in word.chars:
                 return False
 
-            if flag == 'y' and (char not in word.chars or word.chars[pos] == char):
+            if color == 'y' and (char not in word.chars or word.chars[pos] == char):
                 return False
 
-            if flag == 'g' and word.chars[pos] != char:
+            if color == 'g' and word.chars[pos] != char:
                 return False
 
         return True
@@ -63,12 +63,12 @@ class WordleSolver:
 
             choice = input(f'Choose your guess(1-{top_n}):')
             guess_word = qualified_words[int(choice) - 1]
-            response_input = input('Enter Wordle response:')
-            if response_input == 'ggggg':
+            colors_input = input('Enter Wordle response:')
+            if colors_input == 'ggggg':
                 print("congratulations!!")
                 return
 
-            self.responses.append(Response(guess_word, response_input))
+            self.responses.append(Response(guess_word, colors_input))
 
     def _score_words_by_char_frequency(self):
         char_pos_frequency: Dict[str, int] = defaultdict(int)
