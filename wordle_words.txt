@@ -7989,7 +7989,6 @@ flaws
 hopin
 shear
 torch
-cuman
 dowly
 seppa
 tirol
@@ -8204,7 +8203,6 @@ hache
 liman
 otley
 tabby
-chany
 chefs
 duvet
 worth
@@ -8861,7 +8859,6 @@ mtier
 nanas
 furze
 gunda
-cuban
 jefes
 lozar
 siege
