@@ -48,14 +48,13 @@ class WordleSolver:
         round = 0
         while(round <= 6):
             round += 1
-            print(f"Round {round}: Recommended Guesses:")
-
             qualified_words = self._get_qualified_words()
-            print(f"There are {len(qualified_words)} candidates")
-            for i, word in enumerate(qualified_words[0:top_n]):
-                print(f"{i+1}): {word}")
 
-            choice = input(f'Choose your guess(1-{top_n}):')
+            print(f"{round}. Recommendations out of {len(qualified_words)}:")
+            for i, word in enumerate(qualified_words[0:top_n]):
+                print(f"\t{i+1}): {word}")
+
+            choice = input(f'Please choose (1-{top_n}):')
             guess_word = qualified_words[int(choice) - 1]
             colors_input = input('Enter Wordle response:')
             if colors_input == 'ggggg':
@@ -76,7 +75,7 @@ class WordleSolver:
 
     def _get_qualified_words(self) -> List[Word]:
         def _is_word_qualified(word: Word) -> bool:
-            return all([response.is_word_qualified(word) for response in self.responses])
+            return all([r.is_word_qualified(word) for r in self.responses])
 
         return list(filter(lambda word: _is_word_qualified(word), self.words))
 
