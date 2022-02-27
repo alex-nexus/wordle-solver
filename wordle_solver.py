@@ -69,9 +69,7 @@ class Response:
 
 @dataclass
 class WordleSolver:
-    ALL_WORDS_FILE = 'files/all_words.txt'
-    WORDLE_WORDS_FILE = 'files/wordle_words.txt'
-    CHAR_FREQUENCY_FILE = 'files/char_pos_frequency.txt'
+    ALL_WORDS_FILE = 'wordle_words.txt'
 
     wordle_words: List[Word] = field(default_factory=list)
     char_pos_frequency: Dict[str, int] = field(default_factory=dict)
