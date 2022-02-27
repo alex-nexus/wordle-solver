@@ -19,10 +19,10 @@ class Word:
 @dataclass
 class Response:
     word: Word
-    colors_str: str
+    colors: List[str]
 
     def is_word_qualified(self, word: Word) -> bool:
-        for pos, (char, color) in enumerate(zip(self.word.chars, list(self.colors_str))):
+        for pos, (char, color) in enumerate(zip(self.word.chars, self.colors)):
             if color == 'b' and char in word.chars:
                 return False
 
@@ -66,7 +66,7 @@ class WordleSolver:
                 print("congratulations!!")
                 return
 
-            self.responses.append(Response(guess_word, colors_input))
+            self.responses.append(Response(guess_word, list(colors_input)))
 
     def _score_words_by_char_frequency(self):
         char_pos_frequency: Dict[str, int] = defaultdict(int)
