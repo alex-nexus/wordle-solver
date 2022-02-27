@@ -24,7 +24,7 @@ class Response:
                 and len(self.colors) == 5)
 
     def is_finished(self) -> bool:
-        return set(self.colors) == set(['g'])
+        return set(self.colors) == {'g'}
 
     def is_word_qualified(self, word: Word) -> bool:
         for pos, (char, color) in enumerate(zip(self.word.chars, self.colors)):
