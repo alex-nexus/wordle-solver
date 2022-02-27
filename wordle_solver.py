@@ -5,6 +5,17 @@ from typing import Dict, List
 WORDLE_WORDS_FILE = 'wordle_words.txt'
 
 
+def is_wordle_word(line: str):
+    chars = [c for c in line.strip().lower()]
+    if len(chars) != 5:
+        return False
+    for char in chars:
+        if char.isdigit() or char in ('-', ",", '.', "'", "/"):
+            return False
+
+    return True
+
+
 @dataclass
 class Word:
     DISALLOWED_CHARS = ('-', ",", '.', "'", "/")
@@ -15,17 +26,6 @@ class Word:
     def __init__(self, word_input: str):
         self.chars = [c for c in word_input.strip().lower()]
         self.char_scores = [0, 0, 0, 0, 0]
-
-    @staticmethod
-    def is_wordle_word(line: str):
-        chars = [c for c in line.strip().lower()]
-        if len(chars) != 5:
-            return False
-        for char in chars:
-            if char.isdigit() or char in ('-', ",", '.', "'", "/"):
-                return False
-
-        return True
 
     @property
     def score(self) -> int:
@@ -88,8 +88,7 @@ class WordleSolver:
     # preprocessing
     def _load_wordle_words(self):
         fh = open(WORDLE_WORDS_FILE, 'r')
-        self.wordle_words = [Word(line) for line in fh.readlines()
-                             if Word.is_wordle_word(line)]
+        self.wordle_words = [Word(line) for line in fh.readlines()]
 
     def _analyze_char_frequency(self) -> Dict[str, int]:
         char_pos_frequency: Dict[str, int] = defaultdict(int)
