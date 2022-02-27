@@ -67,17 +67,17 @@ class Response:
 
 @dataclass
 class WordleSolver:
-    def __init__(self):
-        self.wordle_words: List[Word] = []
-        self.char_pos_frequency: Dict[str, int] = defaultdict(int)
-        self.responses: List[Response] = []
+    wordle_words: List[Word] = field(default_factory=list)
 
-        self._process_all_words_file()
-        self._analyze_char_frequency()
-        self._score_words()
-        self._sort_words()  # sort by total scores
+    def __init__(self):
+        self._load_wordle_words()
+        char_pos_frequency = self._analyze_char_frequency()
+        self._score_words(char_pos_frequency)
+        self._sort_words_by_score()  # sort by total scores
 
     def start(self, top_n: int = 10):
+        self.responses: List[Response] = []
+
         round = 0
         while(round <= 6):
             round += 1
@@ -94,22 +94,24 @@ class WordleSolver:
             self.responses.append(Response(guess_word, response_input))
 
     # preprocessing
-    def _process_all_words_file(self):
+    def _load_wordle_words(self):
         fh = open(WORDLE_WORDS_FILE, 'r')
         self.wordle_words = [Word(line) for line in fh.readlines()
                              if Word.is_wordle_word(line)]
 
-    def _analyze_char_frequency(self):
+    def _analyze_char_frequency(self) -> Dict[str, int]:
+        char_pos_frequency: Dict[str, int] = defaultdict(int)
         for word in self.wordle_words:
             for pos, char in enumerate(word.chars):
-                self.char_pos_frequency[f"{char},{pos}"] += 1
+                char_pos_frequency[f"{char},{pos}"] += 1
+        return char_pos_frequency
 
-    def _score_words(self):
+    def _score_words(self, char_pos_frequency: Dict[str, int]):
         for word in self.wordle_words:
             for pos, char in enumerate(word.chars):
-                word.char_scores[pos] = self.char_pos_frequency[f"{char},{pos}"]
+                word.char_scores[pos] = char_pos_frequency[f"{char},{pos}"]
 
-    def _sort_words(self):
+    def _sort_words_by_score(self):
         self.wordle_words.sort(key=lambda word: word.score,  reverse=True)
 
     # game
