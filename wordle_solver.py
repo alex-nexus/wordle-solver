@@ -9,10 +9,8 @@ class Word:
     char_scores: List[int] = field(default_factory=lambda: [0, 0, 0, 0, 0])
 
     def score(self) -> int:
-        # uniq the char so repeated chars don't get double scored
-        char_to_scores = {char: score
-                          for char, score in zip(self.chars, self.char_scores)}
-        return sum(char_to_scores.values())
+        # the summation of each (char,pos) frequency
+        return sum(self.char_to_scores)
 
     def __str__(self) -> str:
         return ('').join(self.chars)

@@ -2480,7 +2480,6 @@ mable
 nader
 manid
 padre
-bolan
 dirks
 foims
 trois
@@ -5899,7 +5898,6 @@ nache
 doyle
 ratty
 crone
-cumay
 duroy
 lonee
 tinge
@@ -6976,7 +6974,6 @@ autem
 siroc
 trina
 fried
-cupay
 diver
 alpen
 arcas
@@ -9169,7 +9166,6 @@ taegu
 biton
 lesak
 ogren
-chait
 rewin
 sclat
 viper
@@ -10107,7 +10103,6 @@ kulda
 neist
 quote
 wynds
-cumal
 nigre
 grave
 kemah
@@ -12674,7 +12669,6 @@ grani
 rheae
 sight
 sulfo
-chaim
 drent
 jambi
 pease
