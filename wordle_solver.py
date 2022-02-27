@@ -1,6 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, List, Iterable
+from typing import List, Iterable
 
 
 @dataclass
@@ -14,8 +14,17 @@ class Word:
 
 @dataclass
 class Response:
+    ALLOWED_COLORS = ['b', 'g', 'y']
+
     word: Word
     colors: List[str]
+
+    def is_valid(self):
+        return (all([c in self.ALLOWED_COLORS for c in self.colors])
+                and len(self.colors) == 5)
+
+    def is_finished(self) -> bool:
+        return set(self.colors) == set(['g'])
 
     def is_word_qualified(self, word: Word) -> bool:
         for pos, (char, color) in enumerate(zip(self.word.chars, self.colors)):
@@ -49,16 +58,20 @@ class WordleSolver:
             for i, word in enumerate(qualified_words[0:top_n]):
                 print(f"\t{i+1}): {word}")
 
-            choice = input(f'Please choose (1-{top_n}):')
-            guess_word = qualified_words[int(choice) - 1]
+            choice = int(input(f'Please choose (1-{top_n}):').strip())
             colors_input = input('Enter Wordle response:')
-            if colors_input == 'ggggg':
-                return print("congratulations!!")
 
-            responses.append(Response(guess_word, list(colors_input)))
+            response = Response(qualified_words[choice - 1], list(colors_input))
+            if response.is_finished():
+                return print("congratulations!!")
+            if response.is_valid():
+                responses.append(response)
+            else:
+                print("\tRESPONSE INVALID. Please try again\n")
 
     def _score_words_by_char_pos_frequency(self):
-        char_pos_to_counts: Dict[str, int] = defaultdict(int)
+        char_pos_to_counts = defaultdict(int)
+
         for word in self.words:
             for pos, char in enumerate(word.chars):
                 char_pos_to_counts[f"{char}:{pos}"] += 1
