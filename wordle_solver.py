@@ -44,8 +44,6 @@ class WordleSolver:
     def __init__(self):
         fh = open('wordle_words.txt', 'r')  # filtered and sorted words
         self.words = [Word(list(line.strip())) for line in fh.readlines()]
-
-    def __post_init__(self):
         self._score_words_by_char_pos_frequency()
         self.words.sort(key=lambda word: word.score, reverse=True)  # optional
 
@@ -77,7 +75,8 @@ class WordleSolver:
                 char_pos_to_counts[f"{char}:{pos}"] += 1
 
         for word in self.words:
-            for pos, char in enumerate(word.chars):
+            char_to_pos = {char: pos for pos, char in enumerate(word.chars)}
+            for char, pos in char_to_pos.items():
                 word.score += char_pos_to_counts[f"{char}:{pos}"]
 
     def _get_qualified_words(self, responses: List[Response]) -> Iterable[Word]:
