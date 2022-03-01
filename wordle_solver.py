@@ -34,15 +34,18 @@ class Response:
             if color == 'y' and (char not in word.chars or word.chars[pos] == char):
                 return False
 
-            if color == 'g' and word.chars[pos] != char:
-                return False
+            # the following commented out codes seems unnecessary since
+            # we already know the exact green location, we can actually use the
+            # space to explore other possibilities
+            # if color == 'g' and word.chars[pos] != char:
+            #     return False
 
         return True
 
 
 class WordleSolver:
     def __init__(self):
-        fh = open('wordle_words.txt', 'r')  # filtered and sorted words
+        fh = open('wordle-answers-alphabetical.txt', 'r')
         self.words = [Word(list(line.strip())) for line in fh.readlines()]
         self._score_words_by_char_pos_frequency()
         self.words.sort(key=lambda word: word.score, reverse=True)  # optional
