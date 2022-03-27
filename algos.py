@@ -44,17 +44,33 @@ class AlgoV1(AlgoBase):
         self.words.sort(key=lambda word: word.score, reverse=True)  # optional
 
     def guess_words(self) -> List[Word]:
-        def _is_word_qualified(word: Word) -> bool:
-            return all([response._is_word_qualified(word)
+        def _does_word_pass_all_responses(word: Word) -> bool:
+            return all([self._is_word_qualified(response, word)
                         for response in self.responses])
 
         words = list(
-            filter(lambda word: _is_word_qualified(word), self.words))
+            filter(lambda word: _does_word_pass_all_responses(word), self.words))
 
         return words[0:self.top_n]
 
     def guess_a_word(self) -> Word:
         return self.guess_words()[0]
+
+    def _is_word_qualified(self, response: Response, word: Word) -> bool:
+        for pos, (char, color) in enumerate(zip(response.word.chars, response.colors)):
+            if color == 'b' and char in word.chars:
+                return False
+
+            if color == 'y' and (char not in word.chars or word.chars[pos] == char):
+                return False
+
+            # the following commented out codes seems unnecessary since
+            # we already know the exact green location, we can actually use the
+            # space to explore other possibilities
+            # if color == 'g' and word.chars[pos] != char:
+            #     return False
+
+        return True
 
 
 @dataclass
