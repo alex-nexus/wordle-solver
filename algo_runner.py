@@ -1,8 +1,9 @@
+from multiprocessing import Pool
 import random
 from typing import List
 
 from models import Response, Word
-from algos import AlgoV1, AlgoV2
+from algos import AlgoV1, AlgoV2, AlgoV3
 
 
 def calculate_response(answer_word: Word, guess_word: Word):
@@ -25,10 +26,7 @@ class AlgoRunner:
         self.top_n = top_n
         self.n_times = n_times
 
-        if self.algo_name == 'AlgoV1':
-            self.algo = AlgoV1(top_n)
-        elif self.algo_name == 'AlgoV2':
-            self.algo = AlgoV2(top_n)
+        self.algo = eval(f"{self.algo_name}(top_n)")
 
         self.random_words = self._random_words(n_times)
 
@@ -55,11 +53,11 @@ class AlgoRunner:
     def simulate(self) -> float:
         i = 0
         total_guesses_count = 0
-        for answer_word in self._random_words(self.n_times):
+
+        for answer_word in self.random_words:
             i += 1
             print(f"{i}th game: {answer_word}")
             guesses_count = self._solve_one(answer_word)
-            print(f"guesses_count:{guesses_count}")
             total_guesses_count += guesses_count
 
         avg_guesses = float(total_guesses_count) / i
@@ -82,13 +80,12 @@ class AlgoRunner:
         while(guesses_count <= 6):
             guess_word = self.algo.guess_a_word()
             guesses_count += 1
-            print(f"\t{guesses_count}th guess: guess_word: {guess_word}")
             response = calculate_response(answer_word, guess_word)
-            print(f"\t\t=> response: {response}")
+            print(f"\t{guesses_count}th guess: {guess_word} => {response}")
             self.algo.add_response(response)
 
             if response.is_game_over():
-                print("Game Over! Congratulations!!")
+                print(f"Solved in {guesses_count} Guesses\n")
                 return guesses_count
             elif guesses_count == 6:
                 print('Did not solve')
@@ -99,7 +96,7 @@ if __name__ == '__main__':
     # AlgoRunner(top_n=5).run_cli()
 
     algo_to_avg = {}
-    for algo_name in ['AlgoV1', 'AlgoV2']:
-        algo_to_avg[algo_name] = AlgoRunner(algo_name, n_times=100).simulate()
+    for algo_name in ['AlgoV1', 'AlgoV2', 'AlgoV3']:
+        algo_to_avg[algo_name] = AlgoRunner(algo_name, n_times=200).simulate()
 
     print(algo_to_avg)
