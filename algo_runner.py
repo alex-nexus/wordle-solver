@@ -51,8 +51,6 @@ class AlgoRunner:
     # simulation
 
     def simulate(self) -> float:
-        total_guesses_count = 0
-
         random_words = self.random_words
 
         with Pool(processes=4) as P:
@@ -94,8 +92,5 @@ class AlgoRunner:
 if __name__ == '__main__':
     # AlgoRunner(top_n=5).run_cli()
 
-    algo_to_avg = {}
-    for algo_name in ['AlgoV1', 'AlgoV2', 'AlgoV3']:
-        algo_to_avg[algo_name] = AlgoRunner(algo_name, n_times=200).simulate()
-
-    print(algo_to_avg)
+    print({algo_name: AlgoRunner(algo_name, n_times=200).simulate()
+           for algo_name in ['AlgoV1', 'AlgoV2', 'AlgoV3']})

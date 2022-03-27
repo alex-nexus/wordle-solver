@@ -56,8 +56,9 @@ class AlgoV1(AlgoBase):
                 if color == 'y' and (char not in word.chars or word.chars[pos] == char):
                     return False
 
-                if color == 'g' and word.chars[pos] != char:
-                    return False
+                if self.on_nth_guess >= 3:
+                    if color == 'g' and word.chars[pos] != char:
+                        return False
 
             return True
 
@@ -75,7 +76,7 @@ class AlgoV1(AlgoBase):
 class AlgoV2(AlgoV1):
     def guess_a_word(self) -> Word:
         if self.on_nth_guess == 1:
-            return Word(list('slice'))
+            return Word(list('adept'))
         elif self.on_nth_guess == 2:
             return Word(list('train'))
         else:
@@ -93,7 +94,7 @@ class AlgoV3(AlgoV1):
                 if color == 'y' and (char not in word.chars or word.chars[pos] == char):
                     return False
 
-                if self.on_nth_guess >= 1:
+                if self.on_nth_guess >= 3:
                     if color == 'g' and word.chars[pos] != char:
                         return False
 
