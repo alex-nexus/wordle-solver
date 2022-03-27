@@ -29,13 +29,14 @@ class AlgoBase:
 @dataclass
 class AlgoV1(AlgoBase):
     def rank_words(self):
-        # _by_char_pos_frequency
         char_pos_to_counts = defaultdict(int)
 
+        # iterate the entire word list and calcuate char+pos_frequency
         for word in self.words:
             for pos, char in enumerate(word.chars):
                 char_pos_to_counts[f"{char}:{pos}"] += 1
 
+        # sum each word's score
         for word in self.words:
             char_to_pos = {char: pos for pos, char in enumerate(word.chars)}
             for char, pos in char_to_pos.items():
@@ -43,9 +44,28 @@ class AlgoV1(AlgoBase):
 
         self.words.sort(key=lambda word: word.score, reverse=True)  # optional
 
+    def guess_a_word(self) -> Word:
+        return self.guess_words()[0]
+
     def guess_words(self) -> List[Word]:
+        def _is_word_qualified(response: Response, word: Word) -> bool:
+            for pos, (char, color) in enumerate(zip(response.word.chars, response.colors)):
+                if color == 'b' and char in word.chars:
+                    return False
+
+                if color == 'y' and (char not in word.chars or word.chars[pos] == char):
+                    return False
+
+                # the following commented out codes seems unnecessary since
+                # we already know the exact green location, we can actually use the
+                # space to explore other possibilities
+                # if color == 'g' and word.chars[pos] != char:
+                #     return False
+
+            return True
+
         def _does_word_pass_all_responses(word: Word) -> bool:
-            return all([self._is_word_qualified(response, word)
+            return all([_is_word_qualified(response, word)
                         for response in self.responses])
 
         words = list(
@@ -53,26 +73,21 @@ class AlgoV1(AlgoBase):
 
         return words[0:self.top_n]
 
-    def guess_a_word(self) -> Word:
-        return self.guess_words()[0]
-
-    def _is_word_qualified(self, response: Response, word: Word) -> bool:
-        for pos, (char, color) in enumerate(zip(response.word.chars, response.colors)):
-            if color == 'b' and char in word.chars:
-                return False
-
-            if color == 'y' and (char not in word.chars or word.chars[pos] == char):
-                return False
-
-            # the following commented out codes seems unnecessary since
-            # we already know the exact green location, we can actually use the
-            # space to explore other possibilities
-            # if color == 'g' and word.chars[pos] != char:
-            #     return False
-
-        return True
-
 
 @dataclass
 class AlgoV2(AlgoV1):
-    pass
+    def rank_words(self):
+        char_pos_to_counts = defaultdict(int)
+
+        # iterate the entire word list and calcuate char+pos_frequency
+        for word in self.words:
+            for pos, char in enumerate(word.chars):
+                char_pos_to_counts[f"{char}:{pos}"] += 1
+
+        # sum each word's score
+        for word in self.words:
+            char_to_pos = {char: pos for pos, char in enumerate(word.chars)}
+            for char, pos in char_to_pos.items():
+                word.score += char_pos_to_counts[f"{char}:{pos}"]
+
+        # self.words.sort(key=lambda word: word.score, reverse=True)  # optional

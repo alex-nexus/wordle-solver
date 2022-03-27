@@ -24,6 +24,8 @@ class AlgoRunner:
         self.algo_name = algo_name
         if self.algo_name == 'AlgoV1':
             self.algo = AlgoV1(top_n)
+        elif self.algo_name == 'AlgoV2':
+            self.algo = AlgoV2(top_n)
 
     def run_cli(self):
         while(True):
@@ -45,7 +47,7 @@ class AlgoRunner:
 
     # simulation
 
-    def simulate(self, n_times: int = 10):
+    def simulate(self, n_times: int = 10) -> float:
         i = 0
         total_guesses_count = 0
         for answer_word in self._random_words(n_times):
@@ -57,6 +59,7 @@ class AlgoRunner:
 
         avg_guesses = float(total_guesses_count) / i
         print(f'Simulate {n_times} games: average {avg_guesses} steps')
+        return avg_guesses
 
     def _reset_algo(self):
         self.algo.responses = []
@@ -89,4 +92,9 @@ class AlgoRunner:
 
 if __name__ == '__main__':
     # AlgoRunner(top_n=5).run_cli()
-    AlgoRunner().simulate(100)
+
+    algo_to_avg = {}
+    for algo_name in ['AlgoV1', 'AlgoV2']:
+        algo_to_avg[algo_name] = AlgoRunner(algo_name).simulate(100)
+
+    print(algo_to_avg)
