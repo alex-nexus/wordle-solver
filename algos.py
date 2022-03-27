@@ -1,15 +1,25 @@
 from collections import defaultdict
-from typing import Iterable
+from dataclasses import dataclass, field
+from typing import Iterable, List
 
 from models import Word, Response
 
 
-class AlgoV1:
-    def __init__(self, top_n: int = 1):
-        self.top_n = top_n
+@dataclass
+class AlgoBase:
+    top_n: int = 1
+    responses: List[Response] = field(default_factory=list)
 
-        self.responses = []
+    def add_response(self, response: Response):
+        self.responses.append(response)
 
+    def __str__(self) -> str:
+        return self.__class__
+
+
+@dataclass
+class AlgoV1(AlgoBase):
+    def __post_init__(self):
         fh = open('wordle-answers-alphabetical.txt', 'r')
         self.words = [Word(list(line.strip())) for line in fh.readlines()]
         self._score_words_by_char_pos_frequency()
@@ -34,8 +44,6 @@ class AlgoV1:
             for char, pos in char_to_pos.items():
                 word.score += char_pos_to_counts[f"{char}:{pos}"]
 
-    def add_response(self, response: Response):
-        self.responses.append(response)
 
-    def __str__(self) -> str:
-        return 'AlgoV1'
+class AlgoV2:
+    pass

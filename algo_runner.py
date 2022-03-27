@@ -2,7 +2,7 @@ import random
 from typing import List
 
 from models import Response, Word
-from algo_v1 import AlgoV1
+from algos import AlgoV1, AlgoV2
 
 
 def calculate_response(answer_word: Word, guess_word: Word):
