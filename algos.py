@@ -90,4 +90,4 @@ class AlgoV2(AlgoV1):
             for char, pos in char_to_pos.items():
                 word.score += char_pos_to_counts[f"{char}:{pos}"]
 
-        # self.words.sort(key=lambda word: word.score, reverse=True)  # optional
+        self.words.sort(key=lambda word: word.score, reverse=True)  # optional

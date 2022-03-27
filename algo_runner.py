@@ -20,12 +20,17 @@ def calculate_response(answer_word: Word, guess_word: Word):
 
 
 class AlgoRunner:
-    def __init__(self, algo_name: str = 'AlgoV1', top_n=1):
+    def __init__(self, algo_name: str = 'AlgoV1', top_n=1, n_times=100):
         self.algo_name = algo_name
+        self.top_n = top_n
+        self.n_times = n_times
+
         if self.algo_name == 'AlgoV1':
             self.algo = AlgoV1(top_n)
         elif self.algo_name == 'AlgoV2':
             self.algo = AlgoV2(top_n)
+
+        self.random_words = self._random_words(n_times)
 
     def run_cli(self):
         while(True):
@@ -47,10 +52,10 @@ class AlgoRunner:
 
     # simulation
 
-    def simulate(self, n_times: int = 10) -> float:
+    def simulate(self) -> float:
         i = 0
         total_guesses_count = 0
-        for answer_word in self._random_words(n_times):
+        for answer_word in self._random_words(self.n_times):
             i += 1
             print(f"{i}th game: {answer_word}")
             guesses_count = self._solve_one(answer_word)
@@ -58,7 +63,7 @@ class AlgoRunner:
             total_guesses_count += guesses_count
 
         avg_guesses = float(total_guesses_count) / i
-        print(f'Simulate {n_times} games: average {avg_guesses} steps')
+        print(f'Simulate {self.n_times} games: average {avg_guesses} steps')
         return avg_guesses
 
     def _reset_algo(self):
@@ -95,6 +100,6 @@ if __name__ == '__main__':
 
     algo_to_avg = {}
     for algo_name in ['AlgoV1', 'AlgoV2']:
-        algo_to_avg[algo_name] = AlgoRunner(algo_name).simulate(100)
+        algo_to_avg[algo_name] = AlgoRunner(algo_name, n_times=100).simulate()
 
     print(algo_to_avg)
