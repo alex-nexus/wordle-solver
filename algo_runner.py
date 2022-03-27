@@ -1,4 +1,5 @@
 import random
+from typing import List
 
 from models import Response, Word
 from algo_v1 import AlgoV1
@@ -21,7 +22,7 @@ def calculate_response(answer_word: Word, guess_word: Word):
 class AlgoRunner:
     def __init__(self, algo_name: str = 'AlgoV1'):
         self.algo_name = algo_name
-        if algo_name == 'AlgoV1':
+        if self.algo_name == 'AlgoV1':
             self.algo = AlgoV1()
 
     def run_cli(self, top_n: int = 1):
@@ -56,16 +57,20 @@ class AlgoRunner:
 
         avg_guesses = float(total_guesses_count) / i
         print(
-            f'Simulate {n_times} games: {self.algo} takes {avg_guesses} steps')
+            f'Simulate {n_times} games: average {avg_guesses} steps')
 
-    def _random_words(self, n_times: int = 10):
+    def _reset_algo(self):
+        self.algo.responses = []
+
+    def _random_words(self, n_times: int = 10) -> List[Word]:
         fh = open('wordle-answers-alphabetical.txt', 'r')
         all_words = [Word(list(line.strip())) for line in fh.readlines()]
         random.shuffle(all_words)
         return all_words[0:n_times]
 
-    def _solve_one(self, answer_word: Word):
+    def _solve_one(self, answer_word: Word) -> int:
         guesses_count = 0
+        self._reset_algo()
 
         while(guesses_count <= 6):
             guess_word = list(self.algo.guess_words())[0]
@@ -78,10 +83,11 @@ class AlgoRunner:
             if response.is_game_over():
                 print("Game Over! Congratulations!!")
                 return guesses_count
-
-        print('Did not solve')
+            elif guesses_count == 6:
+                print('Did not solve')
+                return guesses_count
 
 
 if __name__ == '__main__':
     # AlgoRunner().run_cli(1)
-    AlgoRunner().simulate(1)
+    AlgoRunner().simulate(100)
