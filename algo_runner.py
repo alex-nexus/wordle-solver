@@ -20,12 +20,12 @@ def calculate_response(answer_word: Word, guess_word: Word):
 
 
 class AlgoRunner:
-    def __init__(self, algo_name: str = 'AlgoV1'):
+    def __init__(self, algo_name: str = 'AlgoV1', top_n=1):
         self.algo_name = algo_name
         if self.algo_name == 'AlgoV1':
-            self.algo = AlgoV1()
+            self.algo = AlgoV1(top_n)
 
-    def run_cli(self, top_n: int = 1):
+    def run_cli(self):
         while(True):
             guess_words = list(self.algo.guess_words())
             print(f"Recommendations out of {len(guess_words)}:")
@@ -56,8 +56,7 @@ class AlgoRunner:
             total_guesses_count += guesses_count
 
         avg_guesses = float(total_guesses_count) / i
-        print(
-            f'Simulate {n_times} games: average {avg_guesses} steps')
+        print(f'Simulate {n_times} games: average {avg_guesses} steps')
 
     def _reset_algo(self):
         self.algo.responses = []
@@ -73,7 +72,7 @@ class AlgoRunner:
         self._reset_algo()
 
         while(guesses_count <= 6):
-            guess_word = list(self.algo.guess_words())[0]
+            guess_word = self.algo.guess_a_word()
             guesses_count += 1
             print(f"\t{guesses_count}th guess: guess_word: {guess_word}")
             response = calculate_response(answer_word, guess_word)
@@ -89,5 +88,5 @@ class AlgoRunner:
 
 
 if __name__ == '__main__':
-    # AlgoRunner().run_cli(1)
+    # AlgoRunner(top_n=5).run_cli()
     AlgoRunner().simulate(100)

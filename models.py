@@ -25,7 +25,7 @@ class Response:
     def is_game_over(self) -> bool:
         return set(self.colors) == {'g'}
 
-    def is_word_qualified(self, word: Word) -> bool:
+    def _is_word_qualified(self, word: Word) -> bool:
         for pos, (char, color) in enumerate(zip(self.word.chars, self.colors)):
             if color == 'b' and char in word.chars:
                 return False
