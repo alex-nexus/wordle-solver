@@ -16,7 +16,7 @@ class Response:
     ALLOWED_COLORS = ['b', 'g', 'y']
 
     word: Word
-    colors: List[str]
+    colors: List[str] = field(default_factory=list)
 
     def is_valid(self) -> bool:
         return (all([c in self.ALLOWED_COLORS for c in self.colors])
@@ -40,3 +40,6 @@ class Response:
             #     return False
 
         return True
+
+    def __str__(self) -> str:
+        return ('').join(self.colors)

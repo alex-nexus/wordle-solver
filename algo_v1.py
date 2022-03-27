@@ -15,12 +15,12 @@ class AlgoV1:
         self._score_words_by_char_pos_frequency()
         self.words.sort(key=lambda word: word.score, reverse=True)  # optional
 
-    def guess_words(self, top_n=1) -> Iterable[Word]:
+    def guess_words(self) -> Iterable[Word]:
         def _is_word_qualified(word: Word) -> bool:
             return all([r.is_word_qualified(word) for r in self.responses])
 
         words = list(filter(lambda word: _is_word_qualified(word), self.words))
-        return words[0:top_n]
+        return words[0:self.top_n]
 
     def _score_words_by_char_pos_frequency(self):
         char_pos_to_counts = defaultdict(int)
@@ -36,3 +36,6 @@ class AlgoV1:
 
     def add_response(self, response: Response):
         self.responses.append(response)
+
+    def __str__(self) -> str:
+        return 'AlgoV1'
