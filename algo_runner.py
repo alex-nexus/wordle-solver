@@ -51,16 +51,14 @@ class AlgoRunner:
     # simulation
 
     def simulate(self) -> float:
-        i = 0
         total_guesses_count = 0
 
-        for answer_word in self.random_words:
-            i += 1
-            print(f"{i}th game: {answer_word}")
-            guesses_count = self._solve_one(answer_word)
-            total_guesses_count += guesses_count
+        random_words = self.random_words
 
-        avg_guesses = float(total_guesses_count) / i
+        with Pool(processes=4) as P:
+            guesses_counts = P.map(self._solve_one, random_words)
+
+        avg_guesses = float(sum(guesses_counts)) / len(random_words)
         print(f'Simulate {self.n_times} games: average {avg_guesses} steps')
         return avg_guesses
 
@@ -74,6 +72,7 @@ class AlgoRunner:
         return all_words[0:n_times]
 
     def _solve_one(self, answer_word: Word) -> int:
+        print(f"solve: {answer_word}")
         guesses_count = 0
         self._reset_algo()
 
