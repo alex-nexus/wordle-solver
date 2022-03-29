@@ -3,7 +3,7 @@ import random
 from typing import List
 
 from models import Response, Word
-from algos import AlgoV1, AlgoV2, AlgoV3
+from algos import AlgoV1, AlgoV2
 
 
 def calculate_response(answer_word: Word, guess_word: Word):
@@ -44,7 +44,7 @@ class AlgoRunner:
             if not response.is_valid():
                 print("\tRESPONSE INVALID. Please try again\n")
             elif response.is_game_over():
-                return print("Game Over! Congratulations!!")
+                return print("Solved!")
             else:
                 self.algo.add_response(response)
 
@@ -70,7 +70,7 @@ class AlgoRunner:
         return all_words[0:n_times]
 
     def _solve_one(self, answer_word: Word) -> int:
-        print(f"solve: {answer_word}")
+        print(f"Solve: {answer_word}")
         guesses_count = 0
         self._reset_algo()
 
@@ -78,19 +78,20 @@ class AlgoRunner:
             guess_word = self.algo.guess_a_word()
             guesses_count += 1
             response = calculate_response(answer_word, guess_word)
-            print(f"\t{guesses_count}th guess: {guess_word} => {response}")
+            # print(
+            #     f"\t{guesses_count}th guess for {answer_word}: {guess_word} => {response}")
             self.algo.add_response(response)
 
             if response.is_game_over():
-                print(f"Solved in {guesses_count} Guesses\n")
+                print(f"Solved {answer_word} in {guesses_count} Guesses\n")
                 return guesses_count
             elif guesses_count == 6:
-                print('Did not solve')
+                print(f'Did not solve {answer_word}')
                 return guesses_count
 
 
 if __name__ == '__main__':
-    # AlgoRunner(top_n=5).run_cli()
+    AlgoRunner(top_n=5).run_cli()
 
-    print({algo_name: AlgoRunner(algo_name, n_times=200).simulate()
-           for algo_name in ['AlgoV1', 'AlgoV2', 'AlgoV3']})
+    # print({algo_name: AlgoRunner(algo_name, n_times=200).simulate()
+    #        for algo_name in ['AlgoV1', 'AlgoV2']})
